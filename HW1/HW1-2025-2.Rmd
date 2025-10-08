@@ -15,19 +15,55 @@ knitr::opts_chunk$set(echo = TRUE)
 # Question 1
 (a) Create a vector named `v1` with a sample of size 200 from the set {`one, two, three, four, five`} (use the words, not the numbers). The values `one` and `five` should have probability 0.16, values `two` and `four` probability 0.2, and value `three` probability 0.28.
 
+```{r}
+words <- c("one", "two", "three", "four", "five")
+probabilities <- c(0.16, 0.20, 0.28, 0.20, 0.16)
+
+v1 <- sample(words, 200, replace = TRUE, prob = probabilities)
+head(v1)
+```
 
 (b) Create an **ordered** factor named `fact1` using the vector `v1` as input. The levels should be in increasing order, in the sense that \texttt{one} is less than \texttt{two}, and so on.
 
-(c) Change the labels for the categories. Use the names \texttt{awful, poor,  normal, good}, and  `excellent` for the categories `one`, `two`, `three`, `four`, and `five`, respectively. One way to do this is to use the `labels` augument in the `factor` function to rename the labels. Look up the help page for `factor`. Name the resulting ordered factor `fact2`.
+```{r}
+fact1 <- factor(v1, levels = c("one", "two", "three", "four", "five"), ordered = TRUE)
+head(fact1)
+```
 
+(c) Change the labels for the categories. Use the names \texttt{awful, poor,  normal, good}, and  `excellent` for the categories `one`, `two`, `three`, `four`, and `five`, respectively. One way to do this is to use the `labels` augument in the `factor` function to rename the labels. Look up the help page for `factor`. Name the resulting ordered factor `fact2`.
+```{r}
+fact2 <- factor(v1, levels = c("one", "two", "three", "four", "five"), labels = c("awful", "poor", "normal", "good", "excellent"), ordered = TRUE)
+head(fact2)
+
+```
 
 (d) Create a vector named `v2` with a sample of size 200 from the set {`yellow`, `green`, `blue`, `red`}. All the values should have the same probability.
 
+```{r}
+colors <- c("yellow", "green", "blue", "red")
+v2 <- sample(colors, 200, replace = TRUE)
+head(v2)
+```
+
 (e) Create a factor named `fact3` with vector `v2` as input
+
+```{r}
+fact3 <- factor(v2, levels = c("yellow", "green", "blue", "red"))
+head(fact3)
+```
 
 (f) Create a data frame named `df1` with two components. The first component should be named `item1` and should have the content of `fact1`. The second component should be named `item2` and should have the content of `fact3`.
 
+```{r}
+df1 <- data.frame(item1 = fact1, item2 = fact3)
+head(df1)
+```
+
 (f) Use the function `table` to create a table for the two factors in `df1`, i.e., you should get a table of `item1` against `item2`.  
+
+```{r}
+table(df1$item1, df1$item2)
+```
 
 
 
@@ -39,13 +75,53 @@ Gnedenko's exercise asks the reader to show that if $U_1, U_2, \dots$ are iid un
 
 (a) We start by building a series of commands to obtain the value of $N$ for a simulated sample using the control function `while`. Before the control function, initialize a counter `N` at zero, that will keep track of the number of variables we add until the sum is above 1, and a variable `S`, also at zero, that will store the sum of the uniform random variables. As argument of the command `while` (i.e., within parenthesis) write the condition that the sum is less than or equal to 1. While this condition is satisfied, the code to be run (within braces) should add a uniform random variable to `S` and update the index `N`. After the braces, print `N`.
 
+```{r}
+N <- 0
+S <- 0
+
+while (S <= 1) {
+  S <- S + runif(1)
+  N <- N + 1
+}
+N
+```
+
 (b) The result of (a) is a single simulation of $N$. We need to do this a large number of times and then calculate the average value to use the MC method to approximate $e$. Write a `for` loop that will repeat the simulation in (a) `k` times. The loop should store the `k` simulated values for `N` in a vector.
+
+```{r}
+k <- 1e6
+N_list <- numeric(k)
+
+for(i in 1:k){
+  N <- 0
+  S <- 0
+  
+  while (S <= 1) {
+    S <- S + runif(1)
+    N <- N + 1
+  }
+  N_list[i] <- N
+}
+head(N_list)
+```
 
 (c) Use the result of (b) to simulate (`k` =) 10,000, 100,000, and one million times the value of `N`. Calculate the approximate value of $e$ for the three values of `k`, and also the error in the approximation. Produce a table of relative frequencies for the values of `N` you stored and plot a bar diagram for the relative frequency table for `N`. Comment on your results.
 
 
 Hints for the proof of $E(N)=e$. Observe that for any integer $n$, $N=n$ if and only if $S_n>1$ but $S_{n-1} \leq 1$. Show that $P(N=n) = P(S_{n-1} < 1) - P(S_{n} < 1)$. So we need to calculate $P(S_n <1)$, and this is harder. It can be shown that  $P(S_n <1)= 1/n!$. Use this to obtain $P(N=n)$, and once you have the probability function for $N$, calculate its expected value.
 
+
+```{r}
+mean(N_list)
+
+error <- abs(mean(N_list) - exp(1))
+
+error
+
+rel_table <- table(N_list) / length(N_list)
+rel_table
+barplot(rel_table, main = "Relative Frequency of N", ylab = "Proportion")
+```
 
 
 

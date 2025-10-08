@@ -1,0 +1,197 @@
+---
+title:    |
+  | STAT 210
+  | Applied Statistics and Data Analysis: 
+  | Homework 2
+author: 
+date: "Due on Sep. 21/2025"
+output: pdf_document
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\begin{center}
+\color{red}You cannot use artificial intelligence tools to solve this homework.\\  \color{black}
+
+\textbf{Show complete solutions to get full credit. Writing code is not enough to answer a question. Your comments are more important than the code. Do not write comments in chunks. Label your graphs appropriately}
+\end{center}
+
+
+\bigskip
+
+# Question 1
+
+
+You will need the file `weights.txt`.  This file has (simulated) data on an experiment to test the effects of two different types of diet. The set has 100 observations (50 males and 50 females), and there are three types of `diet`, coded as 1, 2, and 3. The first type (coded 1) corresponds to the control group and has subjects who did not change their usual diet during the eight weeks that the experiment lasted. The other two groups (coded 2 and 3) correspond to the diets that are being tested. The weight is measured in kilograms and the height in centimeters.
+
+
+(a)  Read the file `weights.txt` and store it in an object called `data1`.  Look at the structure of `data1` using the function `str`. Check whether there are missing values in the file using the function `is.na`.
+
+```{r}
+#reads the file, header assumes the first line is column name
+data1 <- read.table("weights.txt", header = TRUE) 
+str(data1)
+
+# is.na returns a matching size matrix of the arguement with true values for missing spots.
+# any() returns true if at least one element in the arguement is true.   
+any(is.na(data1))          
+                      
+```
+
+
+(b)  The columns `pre_weight` and `post_weight` have the weight for the subjects before starting the diet and eight weeks after following the diet, respectively.  Create a new column in `data1` called `diff` that has the difference in weights (final weight minus initial weight).
+
+```{r}
+#adds a new difference column that is the after - before weight.
+data1$diff <- data1$post_weight - data1$pre_weight  
+head(data1)
+```
+
+(c) Using the function `subset`, create a new data frame named `data1b` that has the variables `gender`, `age`, `height`, `diet`, and `diff` in `data1`. Using `data1b` and the function `tapply`, calculate mean and standard deviation for `diff` according to `diet`. 
+<!-- Call the vectors you obtain `diff.mean` and `diff.sd`.  -->
+Compare these results and comment.
+
+```{r}
+#makes a subset from the main data frame with only specific columns
+data1b <- subset(data1, select = c(gender, age, height, diet, diff)) 
+str(data1b)
+
+#calculate the means of the 3 different diet groups
+tapply(data1b$diff, data1b$diet, mean) 
+# calculate the standarad deviations of the 3 different diet groups
+tapply(data1b$diff, data1b$diet, sd)    
+```
+
+the average change of diets 1 and 2 is an increase of weight which means its not really working.
+also their standard deviation is high which means it might work for a specific group and doesn't work for another group.
+diet 3 had the expected result of a weight losing diet, where the average difference is lower weight (negative) and the 
+standard deviation is low which means it works in a similar way on the entire sample.
+
+(d) Using `data1b`  and the function `tapply`, calculate mean and standard deviation for `diff` according to `diet` and `gender`. Compare these results and comment.
+
+```{r}
+tapply(data1b$diff, list(data1b$diet, data1b$gender), mean)
+tapply(data1b$diff, list(data1b$diet, data1b$gender), sd)
+
+```
+According to the data diet 1 works for male individuals, diet 2 seems to not have a major difference, and diet 3 works for both genders.
+the standard deviations shows larger deviations for the first 2 diets and a low deviation for the 3rd one.
+this could mean that the first 2 diets are not as strict as diet 3, allowing for more individual variability which increases the SD.
+
+
+(e) Use the function `split` on the file `data1` with argument `gender` and store the result in an object called `d1`. What type of object is `d1`? Use the function `quantile` on the variable `height` on each of the components of `d1` to get a summary of the height for the diﬀerent genders classes. Store the results in two vectors named `ql1` and `ql2`. Calculate `ql2`/`ql1` and interpret the result.
+
+```{r}
+#splits the data frame into a list of multiple data frames according to the number of gender options.
+d1 <- split(data1, data1$gender) 
+str(d1)
+
+#splits the data by cutting it into percentiles with 0% and 100% being the minimum and maximum.
+ql1 <- quantile(d1$F$height)
+ql2 <- quantile(d1$M$height)
+#divides male height percentiles over the female.
+ql2 / ql1  
+```
+
+The division shows the factor between the percentile values of each groups height. it shows that all percentile values are >1 which means
+the average height, minimum, and maximum height values.
+
+(f)  The body mass index (BMI) is defined as a person’s weight in kilograms divided by the square of height in meters. Add a column named `bmi` to the data frame `data1` with the value of this index for each subject using the weight before the experiment started. Count how many subjects have BMI above 30.
+
+```{r}
+#adds a bmi column using its calculation formula.
+data1$bmi <- data1$pre_weight / (((data1$height) / 100)^2) 
+# counts the amount of entires with bmi higher than 30.
+sum(data1$bmi > 30) 
+
+```
+
+
+
+
+# Question 2
+
+
+(a) Create two matrices. The first, called `m1`, has dimension  $3\times 5$ and the components are values simulated from a binomial distribution with size 15 and probability 0.25. The second, called `m2`, has dimensions  $5\times 3$ and the components are values simulated from a Poisson distribution with parameter 3. Create also a vector `v1` of length three from a negative binomial distribution with parameters `size = 2` and `prob = 0.25`.
+
+```{r}
+#Creates a matrix of size 3x5, each entry corresponds to the number
+#of successes in 15 trials with prob 0.25
+m1 <- matrix(rbinom(15, size = 15, prob = 0.25), nrow = 3, ncol = 5)
+head(m1)
+#creates a similar matrix with flipped sizes 
+#but with a poission dist using lambda = 3
+m2 <- matrix(rpois(15, lambda = 3), nrow = 5, ncol = 3)
+head(m2)
+
+#creates a vector of negative binom distribution
+v1 <- rnbinom(3, size = 2, prob = 0.25)
+
+```
+
+(b) Create a list named `hwlist` that has as a first component `m1`, second component `m2`, and third component `v1`. The names of these components should be `item1`, `item2`, and `item3`, respectively. Use the function `rm` to remove `m1`, `m2`, and `v1` from the working environment. 
+
+```{r}
+#create a list using the two matrices and vector.
+hwlist <- list(item1 = m1, item2 = m2, item3 = v1)
+#remove the original variables to not store them twice
+rm(m1, m2, v1)
+
+```
+
+(c)  Using matrix multiplication, multiply `item1` times `item2` and store the result in `hwlist` under the name `item4`. Multiply `item1` and `item2` also in the reverse order, but do not store the outcome
+
+```{r}
+#matrix multiply the two matrices into another entry (produces 3x3)
+hwlist$item4 <- hwlist$item1 %*% hwlist$item2
+#matrix multiply in reverse order (produces 5x5)
+hwlist$item2 %*% hwlist$item1
+head(hwlist)
+```
+
+(d) Denote the transpose of a matrix $M$ by $M^t$. Verify that
+\begin{center}
+(\texttt{item1}$\star$\texttt{item2})$^t$ = (\texttt{item2})$^t$ $\star$ (\texttt{item1})$^t$
+\end{center}
+where $\star$ denotes standard matrix multiplication, and verify this relation also for the product of the
+matrices in the reverse order
+
+```{r}
+#Checks if both sides are equal and that the given formula is correct.
+all.equal(t(hwlist$item1 %*% hwlist$item2), t(hwlist$item2) %*% t(hwlist$item1))
+#same check for reverse order
+all.equal(t(hwlist$item2 %*% hwlist$item1), t(hwlist$item1) %*% t(hwlist$item2))
+```
+
+(e) The matrix `item4` has dimension $3 \times 3$. Add an identity matrix of dimension 3 to `item4` and store it in the same position. 
+
+```{r}
+#adds a 3x3 identity matrix to item 4.
+hwlist$item4 <- hwlist$item4 + diag(3)
+```
+
+(f) Solve the system of equations `item4`$\star x =$ `item3`. Verify that you have obtained the correct solution.
+
+```{r}
+#solves item4 * x = item3 (skeleton Ax = b)
+x <- solve(hwlist$item4, hwlist$item3)
+#verifies correct solution, while using the matrix as vector
+all.equal(as.vector(hwlist$item4 %*% x), hwlist$item3)
+```
+
+(g) Find the inverse of `item4` and call it `item4_inv`. Verify that `item4_inv` is indeed the inverse of `item4`, and that multiplying `item4_inv` $\star$ `item3` gives the solution to the system of equations in (f).
+2
+
+```{r}
+#get the inverse given that A times its inverse gives the identity of that size.
+hwlist$item4_inv <- solve(hwlist$item4, diag(3))
+#Check if the inverse is correct
+all.equal(hwlist$item4 %*% hwlist$item4_inv, diag(3))
+```
+
+
+
