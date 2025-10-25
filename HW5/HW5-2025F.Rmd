@@ -1,0 +1,304 @@
+---
+title:    |
+  | STAT 210
+  | Applied Statistics and Data Analysis: 
+  | Homework 5
+author: 
+date: "Due on October 19/2025"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\begin{center}
+\color{red}{\Large You cannot use artificial intelligence tools to solve this homework.}\\  \color{black}
+
+\medskip
+\textbf{
+Show complete solutions to get full credit. Writing code is not enough to answer a question. Your comments are more important than the code. Do not write comments in chunks. Label your graphs appropriately}
+\medskip
+\end{center}
+
+\begin{center}\color{blue}
+{\large \textbf{For all tests in this homework use a significance level of $\mathbf \alpha$ = 0.02.}}
+\end{center}
+
+## Question 1
+
+An experiment was conducted to evaluate the effect of four different diets on cattle weight gain. In addition to the experimental diets, a control group was included, which received the standard diet. The collected data is stored in the file 25Fhw5Q1.
+The diets are labeled as follows: `ctrl` for control and `dt1`, `dt2`, `dt3`, and `dt4` for the four experimental  diets.
+
+
+Perform a complete analysis of variance for this set. Visualize the data using appropriate plots to help understand the distribution and group differences.
+Determine whether the diets have an effect on the increase in weight through a hypothesis test and state explicitly the null and alternative hypotheses in this test. Estimate the cell means and calculate the effects of each diet. Write the equation for the model and state explicitly the assumptions on which the model is based. Generate diagnostic plots and comment on any patterns or concerns you observe. Use Levene’s and Shapiro-Wilk's tests also. Use Tukey’s HSD procedure to make pairwise comparisons between the diets and comment on the results. Use a non-parametric alternative to the analysis of variance and compare the results. Based on the analysis, identify which diet or diets you would recommend if the objective is to maximize weight gain, and explain your reasoning.
+
+
+We begin by loading the required package and reading the data.
+
+```{r}
+library(car)
+data <- read.table("25Fhw5Q1", header = TRUE);
+str(data)
+
+#change up the diet column into type factor.
+
+data$diet <- as.factor(data$diet)
+
+str(data)
+
+levels(data$diet)
+```
+
+```{r}
+#here we show the data visually as a box plot and as points on top of the same plot.
+boxplot(weight ~ diet, data = data,
+        main = "Weight gain by Diet type",
+        xlab = "Diet",
+        ylab = "Weigh Gain",
+        col = c("blue", "green", "yellow", "red", "cyan"))
+
+points(weight ~ diet, data = data, pch = 16, col = 'purple')
+
+
+```
+
+For the hypothesis test, we choose the null hypothesis H0: mu_ctrl = mu_dt1 = mu_dt2 = mu_dt3 = mu_dt4.
+Which means that our hypothesis is that all diets have the same mean gain.
+
+Thus the alternative hypothesis would be that at least one of the diets has a different mean, which means it probably had an effect on weight gain.
+
+We then fit the ANOVA model to the data.
+
+```{r}
+mod1 <- aov(weight ~ diet, data = data)
+summary(mod1)
+```
+
+Since we have a very small p-value (9.68e-10), then we reject the null hypothesis which was that all diets are the same, or in other words, the diets had no effect.
+
+We next try to find the cell means and analyze further.
+We use model.tables with argument "mean" to find the cell mean of the different types of diets.
+
+```{r}
+model.tables(mod1, 'mean', se = T)
+```
+
+To find the effects of each diet we use the same function without the "mean" argument.
+```{r}
+model.tables(mod1, se = T)
+
+```
+
+Equation of the ANOVA model:
+Y_ij = mu + tau_i + epsilon_ij
+
+Where:
+Y_ij = weight gain for the j-th observation in the i-th diet group
+mu = overall mean weight gain
+tau_i = effect of the i-th diet (deviation from overall mean)
+epsilon_ij = random error term
+i = 1, 2, 3, 4, 5 (diet groups: ctrl, dt1, dt2, dt3, dt4)
+j = 1, 2, ..., n_i (observations within each group)
+
+Assumptions for the ANOVA model:
+Independence, Normality, Homogeneity of Variance.
+
+
+
+Diagnostic Plots:
+
+
+
+
+```{r}
+par(mfrow=c(2,2))
+plot(mod1)
+```
+
+Residual vs fitted shows the trend line being close to 0 which indicates linearity, although there is some variation in the spread of residuals which violates homogeneity of variance; further testing may be needed.
+Q-Q plot shows the points lying roughly on the line, which suggests normality.
+The scale-location plot shows somewhat of an issue with our equal variance assumption, requiring further testing.
+Constant leverage plot shows all points within the dotted lines which shows no influential outliers.
+
+
+Levene's test for homogeneity of variance.
+  H0 is that all groups have equal variance.
+  H1 is at least one group has a different variance.
+
+```{r}
+leveneTest(mod1)
+```
+With p-value = 0.2686, we accept the null hypothesis and that the homogeneity of variance assumption is valid.
+
+
+
+Shapiro-Wilk test for normality.
+H0: Residuals are normally distributed.
+H1: Residuals are not normally distributed.
+```{r}
+shapiro.test(rstandard(mod1))
+```
+
+With p-value = 0.7903, we accept the null hypothesis and that the distribution of residuals is normal.
+
+```{r}
+(mod1.tky <- TukeyHSD(mod1))
+```
+
+By analyzing Tukey's HSD procedure, we see that Diet 1 and 4 show significant difference compared to the control group.
+We also see that diets 2 and 3 have no significant difference to the control group and are not distinguishable.
+We can also see that diets 1 and 4 are also not distinguishable.
+
+```{r}
+par(mfrow=c(1,1))
+plot(mod1.tky, las = 1)
+```
+
+For the non-parametric test we use the Kruskal-Wallis test which is the non-parametric alternative to the ANOVA model.
+
+```{r}
+kruskal.test(weight ~ diet, data = data)
+```
+
+
+The test gives a p-value of 0.0001082, which leads to the same conclusion as the ANOVA model.
+
+If the goal is to maximize weight gain, Diets 1 and 4 are recommended.
+Diets 1 and 4 showed significantly higher average weight gains compared to the other diets and control group, with no significant difference between them.
+
+
+
+
+
+
+
+
+## Question 2
+
+A researcher wants to test whether different types of fertilizers have different effects on plant growth. Four types of fertilizers (A, B, C, D) plus a control group (no fertilizer) were tested. For each fertilizer, five plants are treated and their growth (height in cm) after 30 days is recorded. The results are stored in the file `25Fhw5Q2`.
+
+
+Perform a complete analysis of variance for this set. Visualize the data using appropriate plots to help understand the distribution and group differences.
+Determine whether the fertilizers have an effect on the increase in height through a hypothesis test and state explicitly the null and alternative hypotheses in this test. Estimate the cell means and calculate the effects of each fertilizer. Write the equation for the model and state explicitly the assumptions on which the model is based. Generate diagnostic plots and comment on any patterns or concerns you observe. Use Levene’s and Shapiro-Wilk's tests also. Use Tukey’s HSD procedure to make pairwise comparisons between the fertilizers and comment on the results. Use a non-parametric alternative to the analysis of variance and compare the results. Based on the analysis, identify which fertilizer or fertilizers you would recommend if the objective is to maximize height, and explain your reasoning.
+
+
+```{r}
+data2 <- read.table("25Fhw5Q2", header = TRUE)
+str(data2)
+data2$fertilizer <- as.factor(data2$fertilizer)
+levels(data2$fertilizer)
+```
+
+```{r}
+boxplot(height ~ fertilizer, data = data2,
+main = "Plant Growth by Fertilizer Type",
+xlab = "Fertilizer Type",
+ylab = "Plant Height (cm)",
+col = c("blue", "green", "yellow", "red", "cyan"))
+
+
+
+
+points(height ~ fertilizer, data = data2, pch = 16, col = 'purple')
+```
+
+Hypothesis Test:
+H0: mu_ctrl = mu_dt1 = mu_dt2 = mu_dt3 = mu_dt4.
+(All fertilizers produce the same mean growth)
+H1: At least one fertilizer has a different mean effect on plant growth.
+
+```{r}
+mod2 <- aov(height ~ fertilizer, data = data2)
+summary(mod2)
+```
+
+With p-value = 2.1e-5, we reject the null hypothesis.
+
+```{r}
+#Find cell means and standard errors
+model.tables(mod2, "mean", se = TRUE)
+```
+
+```{r}
+#Find effects for each fertilizer
+model.tables(mod2, se = TRUE)
+```
+
+Equation of the ANOVA model:
+Y_ij = mu + tau_i + epsilon_ij
+
+Where:
+Y_ij = weight gain for the j-th observation in the i-th diet group
+mu = overall mean weight gain
+tau_i = effect of the i-th diet (deviation from overall mean)
+epsilon_ij = random error term
+i = 1, 2, 3, 4, 5 (diet groups: ctrl, dt1, dt2, dt3, dt4)
+j = 1, 2, ..., n_i (observations within each group)
+
+Assumptions for the ANOVA model:
+Independence, Normality, Homogeneity of Variance.
+
+
+
+
+Diagnostic Plots:
+```{r}
+par(mfrow = c(2, 2))
+plot(mod2)
+```
+
+Residuals vs Fitted: shows random scatter around 0 (linearity, equal variance).
+Q-Q plot: points are roughly on the line, suggesting normality.
+Scale-location: variance is mostly constant across fitted values.
+Residual vs Leverage: shows no influential outliers.
+
+
+
+Levene’s Test for Homogeneity of Variance
+H0: all groups have equal variance
+H1: at least one group differs
+```{r}
+leveneTest(mod2)
+```
+
+p-value = 0.8688, therefore we accept H0, variances are homogeneous.
+
+
+Shapiro–Wilk Test for Normality of Residuals
+H0: residuals are normally distributed
+H1: residuals are not normally distributed
+
+```{r}
+shapiro.test(rstandard(mod2))
+```
+p-value = 0.4985, therefore we accept H0, residuals are normally distributed.
+
+
+
+Tukey’s HSD Comparisons
+```{r}
+(mod2.tky <- TukeyHSD(mod2))
+```
+We see that F1 and F2 are indistinguishable and have significantly higher mean than the control group;
+they are also somewhat indistinguishable from F3 which had the strongest results.
+F4 is not significantly different from the control group.
+Therefore, for best performance we see F3 first, then F1 or F2, and lastly F4.
+
+```{r}
+par(mfrow = c(1, 1))
+plot(mod2.tky, las = 1)
+```
+
+Non-parametric Alternative: Kruskal–Wallis Test
+
+```{r}
+kruskal.test(height ~ fertilizer, data = data2)
+```
+
+With p-value of 0.001262, it leads to the same conclusion as the ANOVA model.
+
+For the goal of maximizing plant height, Fertilizer 3 is recommended as it has shown the most significant improvement.
+Fertilizers 1 and 2 also showed improvement, but not to the level of Fertilizer 3.
+Fertilizer 4 showed no significant improvement in plant height.

@@ -19,3 +19,4 @@ boxplot(bill_depth_mm ~ sex + species, data = na.omit(penguins),
         col = c("blue", "green", "red"),
         main = "Bill Depth by Sex and Species",
         ylab = "Bill Depth (mm)")
+
