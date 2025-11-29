@@ -1,0 +1,517 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{STAT 210\\
+Applied Statistics and Data Analysis\\
+First Exam}
+\author{}
+\date{\vspace{-2.5em}October 25, 2025}
+
+\begin{document}
+\maketitle
+
+\begin{center}\color{red}
+{\Large \textbf{You are not allowed to use AI tools to solve this exam}}
+\end{center}
+
+\textbf{You are reminded to adhere to the academic integrity code
+established at KAUST.}
+
+\textbf{This exam is open notes and open book but not open internet. You
+are not allowed to use the internet except for downloading the exam and
+uploading the solution.}
+
+\textbf{Show complete solutions to get full credit. Writing code is not
+enough to answer a question. Your comments are more important than the
+code. Do not write comments inside chunks. Label your graphs
+appropriately. Please identify the files you submit with your surname}
+
+\bigskip
+\begin{center}\color{red}
+{\textbf{For all tests in this exam use a significance level of $\mathbf \alpha$ = 0.01 \\unless otherwise specified}}
+\end{center}
+
+\subsection{Question 1 (50 points)}\label{question-1-50-points}
+
+An industrial engineer is testing whether a new and cheaper machine
+calibration method (Method B) preserves production performance compared
+to the current method (Method A). The main quality measure is the
+tensile strength of metal rods (in MPa) produced by the machines.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\tightlist
+\item
+  Historically, rods produced using Method A have an average tensile
+  strength of 150 MPa. After implementing Method B, a random sample of
+  18 rods is tested, yielding the following strengths:
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{methodB }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FloatTok{152.4}\NormalTok{, }\FloatTok{155.2}\NormalTok{, }\FloatTok{149.6}\NormalTok{, }\FloatTok{153.8}\NormalTok{, }\FloatTok{156.1}\NormalTok{, }\FloatTok{150.9}\NormalTok{, }\FloatTok{154.5}\NormalTok{, }\FloatTok{157.0}\NormalTok{, }\FloatTok{151.8}\NormalTok{,}
+             \FloatTok{155.6}\NormalTok{, }\FloatTok{150.3}\NormalTok{, }\FloatTok{153.0}\NormalTok{, }\FloatTok{154.2}\NormalTok{, }\FloatTok{156.7}\NormalTok{, }\FloatTok{149.8}\NormalTok{, }\FloatTok{152.9}\NormalTok{, }\FloatTok{155.1}\NormalTok{, }\FloatTok{154.0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+What parametric test would you use to compare the new calibration method
+with the reference value? State clearly what hypotheses you are testing
+and which assumptions are needed for the test. Explain why you think
+they are satisfied. Describe the test statistic and calculate its value.
+Describe the sampling distribution and explicitly identify the errors of
+types I and II. Carry out this test and discuss the results.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  To compare the two methods directly, two machines are run for one day
+  each: Machine A uses the standard calibration, Machine B uses the new
+  calibration method. The tensile strengths (in MPa) of 12 rods from
+  each machine are recorded:
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{machineA }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FloatTok{149.2}\NormalTok{, }\FloatTok{151.0}\NormalTok{, }\FloatTok{148.7}\NormalTok{, }\FloatTok{150.1}\NormalTok{, }\FloatTok{149.8}\NormalTok{, }\FloatTok{152.3}\NormalTok{, }\FloatTok{150.5}\NormalTok{, }\FloatTok{151.2}\NormalTok{, }
+              \FloatTok{148.9}\NormalTok{, }\FloatTok{149.7}\NormalTok{, }\FloatTok{150.9}\NormalTok{, }\FloatTok{149.4}\NormalTok{)}
+\NormalTok{machineB }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FloatTok{153.4}\NormalTok{, }\FloatTok{155.1}\NormalTok{, }\FloatTok{152.8}\NormalTok{, }\FloatTok{154.3}\NormalTok{, }\FloatTok{156.0}\NormalTok{, }\FloatTok{155.6}\NormalTok{, }\FloatTok{153.9}\NormalTok{, }\FloatTok{154.8}\NormalTok{, }
+              \FloatTok{152.5}\NormalTok{, }\FloatTok{155.2}\NormalTok{, }\FloatTok{154.0}\NormalTok{, }\FloatTok{153.7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+The engineer now wants to specifically test whether Machine B produces
+stronger rods than Machine A. What parametric test would be adequate for
+comparing the tensile strengths corresponding to the two methods? State
+clearly what hypothesis you are testing and which assumptions are needed
+for the test. Explain why you think they are satisfied. Carry out this
+test and discuss the results.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  In a controlled laboratory experiment, 10 batches of raw material were
+  processed under both calibration methods (A and B). The same batch of
+  material was used for both methods to eliminate raw material
+  variation. The measured tensile strength results (MPa) are:
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mtdA }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FloatTok{148.5}\NormalTok{, }\FloatTok{149.7}\NormalTok{, }\FloatTok{150.3}\NormalTok{, }\FloatTok{151.1}\NormalTok{, }\FloatTok{149.0}\NormalTok{, }\FloatTok{150.8}\NormalTok{, }\FloatTok{149.5}\NormalTok{, }\FloatTok{150.0}\NormalTok{, }\FloatTok{151.2}\NormalTok{, }\FloatTok{149.8}\NormalTok{)}
+\NormalTok{mtdB }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FloatTok{149.6}\NormalTok{, }\FloatTok{150.5}\NormalTok{, }\FloatTok{151.1}\NormalTok{, }\FloatTok{152.0}\NormalTok{, }\FloatTok{149.2}\NormalTok{, }\FloatTok{151.6}\NormalTok{, }\FloatTok{150.1}\NormalTok{, }\FloatTok{151.0}\NormalTok{, }\FloatTok{152.3}\NormalTok{, }\FloatTok{150.4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+The engineer wants to determine if Method B (\texttt{mtdB}) produces
+stronger rods than Method A (\texttt{mtdA}). What parametric test would
+you use in this case? State clearly what hypothesis you are testing and
+which assumptions are needed for the test, and explain why you think
+they are satisfied. Identify the type I and type II errors. Carry out
+this test and discuss the results.
+
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  What non-parametric tests will be adequate for the problems in (a),
+  (b), and (c)? What assumptions are needed, and why do you think they
+  are satisfied? Perform these tests, discuss the results, and compare
+  them with your previous results.
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Question 2 (50 points)}\label{question-2-50-points}
+
+An industrial engineer wants to compare five different lubricants used
+in a manufacturing process to determine their effect on the mean
+friction coefficient of machine parts. The lubricants are coded
+\texttt{A,\ B,\ C,\ D}, and \texttt{E}. Each lubricant is tested on five
+identical machines under the same operating conditions, and the friction
+coefficient is measured (lower values are better). The data is stored in
+the file \texttt{XM125F\_Q2.csv}.
+
+Do a complete analysis of variance model including the following: Plot
+the data. Determine whether the lubricants have an eﬀect on the mean
+friction coefficient through a hypothesis test and state explicitly the
+null and alternative hypotheses. Obtain the estimated values for the
+cell (marginal) means and the eﬀects. Write the equation for the model
+and state explicitly the assumptions on which the model is based. Plot
+the diagnostic charts and comment on them. Use Levene's and
+Shapiro-Wilk's tests also. Use Tukey's HSD procedure to make pairwise
+comparisons and comment on the results. Use a non-parametric alternative
+to the analysis of variance and compare the results. Give your comments
+on every step that you take. If the objective is a lower friction
+coefficient, which design would you select and why?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(car)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: carData
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"XM125F\_Q2.csv"}\NormalTok{, }\AttributeTok{header =} \ConstantTok{TRUE}\NormalTok{) }\CommentTok{\# read the file}
+\FunctionTok{str}\NormalTok{(data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    25 obs. of  2 variables:
+##  $ friction : num  0.41 0.39 0.37 0.36 0.4 0.35 0.33 0.34 0.36 0.35 ...
+##  $ lubricant: chr  "A" "A" "A" "A" ...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data}\SpecialCharTok{$}\NormalTok{lubricant }\OtherTok{\textless{}{-}} \FunctionTok{as.factor}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{lubricant) }\CommentTok{\#make the lubricant a factor instead of character}
+\FunctionTok{str}\NormalTok{(data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    25 obs. of  2 variables:
+##  $ friction : num  0.41 0.39 0.37 0.36 0.4 0.35 0.33 0.34 0.36 0.35 ...
+##  $ lubricant: Factor w/ 5 levels "A","B","C","D",..: 1 1 1 1 1 2 2 2 2 2 ...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{boxplot}\NormalTok{(friction }\SpecialCharTok{\textasciitilde{}}\NormalTok{ lubricant, }\AttributeTok{data =}\NormalTok{ data) }\CommentTok{\#boxplot of the friction for each lubricant}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Exam1-2025F-1-_files/figure-latex/unnamed-chunk-5-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#points(friction \textasciitilde{} lubricant,data = data, col = "purple", pch = 16, ) \#plot the points on the boxplot}
+\end{Highlighting}
+\end{Shaded}
+
+For the parametric test, we will use an anova with the hypotheses as
+follows: H0: mu\_A = mu\_B = mu\_C = mu\_D = mu\_E H1: at least one mean
+is different.
+
+H0 basically means that all lubricant types are the same and have no
+effect.
+
+The anova model assumptions are independence, normality, and equal
+variance.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod1}\OtherTok{\textless{}{-}} \FunctionTok{aov}\NormalTok{(friction }\SpecialCharTok{\textasciitilde{}}\NormalTok{ lubricant, }\AttributeTok{data =}\NormalTok{ data)}
+\FunctionTok{summary}\NormalTok{(mod1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##             Df Sum Sq Mean Sq F value  Pr(>F)    
+## lubricant    4 0.0374 0.00935    43.7 1.3e-09 ***
+## Residuals   20 0.0043 0.00021                    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+Since the p-value of the anova (1.3e-9) is lower than our signficance
+level of 0.01 we reject the null hypothesis and we have evidence to say
+that at least one lubricant is different.
+
+we then find the cell means and standard error.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{model.tables}\NormalTok{(mod1, }\StringTok{\textquotesingle{}mean\textquotesingle{}}\NormalTok{, }\AttributeTok{se =}\NormalTok{ T)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Tables of means
+## Grand mean
+##        
+## 0.3404 
+## 
+##  lubricant 
+## lubricant
+##     A     B     C     D     E 
+## 0.386 0.346 0.310 0.376 0.284 
+## 
+## Standard errors for differences of means
+##         lubricant
+##          0.009252
+## replic.         5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{model.tables}\NormalTok{(mod1, }\AttributeTok{se =}\NormalTok{ T)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Tables of effects
+## 
+##  lubricant 
+## lubricant
+##       A       B       C       D       E 
+##  0.0456  0.0056 -0.0304  0.0356 -0.0564 
+## 
+## Standard errors of effects
+##         lubricant
+##          0.006542
+## replic.         5
+\end{verbatim}
+
+Equation of the anova model: Y\_ij = mu + tau\_i + epsilon\_ij
+
+Where: Y\_ij = weight gain for the j-th observation in the i-th diet
+group mu = overall mean weight gain tau\_i = effect of the i-th diet
+(deviation from overall mean) epsilon\_ij = random error term i = 1, 2,
+3, 4, 5 (diet groups: ctrl, dt1, dt2, dt3, dt4) j = 1, 2, \ldots, n\_i
+(observations within each group)
+
+we then print out the diagnostic plots:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow=}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(mod1)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Exam1-2025F-1-_files/figure-latex/unnamed-chunk-8-1.pdf}}
+
+From the plot we see the following: -Residuals vs fitted: the line is
+orizantal at or very near 0, which indicates linearity -QQ Residuals:
+The data is aligned with the normal line, which indicates normality.
+-Scale-Location: the line is mostly horizantal with some tails, further
+testing may be needed to decide if variance is equal (levene test)
+-Constant lev: plot shows no influential outliers
+
+Testing for equal variance:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{leveneTest}\NormalTok{(mod1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Levene's Test for Homogeneity of Variance (center = median)
+##       Df F value Pr(>F)
+## group  4    0.78   0.55
+##       20
+\end{verbatim}
+
+With a p-value of 0.551 \textgreater\textgreater{} 0.01, we fail to
+reject the null hypothesis and evidence suggests that we have equal
+variance.
+
+Testing for normality:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(}\FunctionTok{rstandard}\NormalTok{(mod1))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  rstandard(mod1)
+## W = 0.971, p-value = 0.66
+\end{verbatim}
+
+with a p-value of 0.6644 \textgreater\textgreater{} 0.01, we fali to
+reject the null hypothesis and evidence suggests that data is normal
+
+Next we use TukeyHSD with confidence level = 0.99 to further analyze the
+data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(mod1.tky }\OtherTok{\textless{}{-}} \FunctionTok{TukeyHSD}\NormalTok{(mod1, }\AttributeTok{conf.level =} \FloatTok{0.99}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Tukey multiple comparisons of means
+##     99% family-wise confidence level
+## 
+## Fit: aov(formula = friction ~ lubricant, data = data)
+## 
+## $lubricant
+##       diff        lwr        upr   p adj
+## B-A -0.040 -0.0746294 -0.0053706 0.00272
+## C-A -0.076 -0.1106294 -0.0413706 0.00000
+## D-A -0.010 -0.0446294  0.0246294 0.81410
+## E-A -0.102 -0.1366294 -0.0673706 0.00000
+## C-B -0.036 -0.0706294 -0.0013706 0.00719
+## D-B  0.030 -0.0046294  0.0646294 0.02968
+## E-B -0.062 -0.0966294 -0.0273706 0.00001
+## D-C  0.066  0.0313706  0.1006294 0.00001
+## E-C -0.026 -0.0606294  0.0086294 0.07215
+## E-D -0.092 -0.1266294 -0.0573706 0.00000
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(mod1.tky)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Exam1-2025F-1-_files/figure-latex/unnamed-chunk-11-1.pdf}}
+
+from the printed data, we see that the following pairs have p values
+\textgreater{} 0.01, therefore A and D are indistinguishable B and D are
+indistinguishable C and E are indistinguishable
+
+from the difference we see that C has lower friction than A, B, and D
+and its indistinguishable from E.
+
+therefore if we want lower friction we go with C or E, and for higher
+friction we go for lubricants A, B, or D
+
+For a non-parametric alternative to the anova we use the Kruskal-Wallis
+rank sum test it has the same assumptions of the anova except for the
+normality requirement.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{kruskal.test}\NormalTok{(friction }\SpecialCharTok{\textasciitilde{}}\NormalTok{ lubricant, }\AttributeTok{data =}\NormalTok{ data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Kruskal-Wallis rank sum test
+## 
+## data:  friction by lubricant
+## Kruskal-Wallis chi-squared = 21.4, df = 4, p-value = 0.00026
+\end{verbatim}
+
+with a p-value of 0.0002605 \textless\textless{} 0.01, it leads to the
+same conclusion as the anova model we did.
+
+Since the objective is to get the lowest amount of friction. data
+suggests that we can group the lubricants into two groups. A,B,D which
+are indistinguishable and C, E which are also indistinguishable.
+
+C,E showed signficant decrease in friction compared to the other group
+of A,B,D thus choosing C or E is recommended for the wanted purpose
+
+\end{document}
