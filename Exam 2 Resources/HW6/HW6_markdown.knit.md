@@ -1,0 +1,42 @@
+---
+title: "HW6"
+output: pdf_document
+date: "2025-11-09"
+---
+
+
+
+---
+title: "STAT 210 - Applied Statistics and Data Analysis"
+subtitle: "Homework 6"
+author: ""
+date: "Due on November 09, 2025"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+  pdf_document: default
+---
+
+## Instructions
+
+- You cannot use artificial intelligence tools to solve this homework.  
+- Show complete solutions to get full credit. Writing code is not enough to answer a question.  
+- Your comments are more important than the code. Do not write comments in chunks.  
+- Label your graphs appropriately.  
+- For all tests in this homework, use a significance level of \\( \alpha = 0.02 \\).
+
+---
+
+## Question 1 (50 pts)
+
+The data for this question is stored in the file `CHFLS` in the library `HSAUR3` and comes from a survey of 60 villages and urban neighborhoods in China published in 2003.  
+It has 1534 observations of 10 variables, but we will focus on `R_age` (age), `R_happy` (self-reported happiness), and `R_region` (region).
+
+### (a)
+Create a new data frame called `df1` that only includes `R_age`, `R_happy`, and `R_region`.  
+Check whether the new data frame has missing data.  
+Explore the distribution of `R_age` for the different regions.  
+Do boxplots of age as a function of region and comment on what you observe.  
+Calculate mean, standard deviation, median, and interquartile range for `R_age` for each of the six regions and comment.
+

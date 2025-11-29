@@ -1,0 +1,122 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={STAT 210 - Applied Statistics and Data Analysis},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{STAT 210 - Applied Statistics and Data Analysis}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Homework 6}
+\author{}
+\date{\vspace{-2.5em}Due on November 09, 2025}
+
+\begin{document}
+\maketitle
+
+\subsection{Instructions}\label{instructions}
+
+\begin{itemize}
+\tightlist
+\item
+  You cannot use artificial intelligence tools to solve this homework.\\
+\item
+  Show complete solutions to get full credit. Writing code is not enough
+  to answer a question.\\
+\item
+  Your comments are more important than the code. Do not write comments
+  in chunks.\\
+\item
+  Label your graphs appropriately.\\
+\item
+  For all tests in this homework, use a significance level of
+  \textbackslash( \alpha = 0.02 \textbackslash).
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Question 1 (50 pts)}\label{question-1-50-pts}
+
+The data for this question is stored in the file \texttt{CHFLS} in the
+library \texttt{HSAUR3} and comes from a survey of 60 villages and urban
+neighborhoods in China published in 2003.\\
+It has 1534 observations of 10 variables, but we will focus on
+\texttt{R\_age} (age), \texttt{R\_happy} (self-reported happiness), and
+\texttt{R\_region} (region).
+
+\subsubsection{(a)}\label{a}
+
+Create a new data frame called \texttt{df1} that only includes
+\texttt{R\_age}, \texttt{R\_happy}, and \texttt{R\_region}.\\
+Check whether the new data frame has missing data.\\
+Explore the distribution of \texttt{R\_age} for the different regions.\\
+Do boxplots of age as a function of region and comment on what you
+observe.\\
+Calculate mean, standard deviation, median, and interquartile range for
+\texttt{R\_age} for each of the six regions and comment.
+
+\end{document}

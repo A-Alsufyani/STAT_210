@@ -1,0 +1,324 @@
+---
+title:    |
+  | STAT 210
+  | Applied Statistics and Data Analysis: 
+  | Homework 8
+author: 
+date: "Due on November 23/2025"
+output: pdf_document
+---
+
+
+\begin{center}
+\color{red}{\Large You cannot use artificial intelligence tools to solve this homework.}\\  \color{black}
+\end{center}
+
+
+\bigskip
+\begin{center}
+\textbf{
+Show complete solutions to get full credit. Writing code is not enough to answer a question. Your comments are more important than the code. Do not write comments in chunks. Label your graphs appropriately}
+\medskip
+
+\textbf{
+For all tests in this homework use a significance level of $\alpha = 0.02$.}
+
+\end{center}
+## Question 1
+
+A labor economist studies weekly wages (`Y`) and how they depend on several worker attributes. The researcher collected a sample of workers and recorded 7 candidate predictors. Your job is to build a regression model. The data is available in the file `HW825FQ1.csv`.
+
+```{r}
+q1_data <- read.csv("HW825FQ1.csv")
+
+str(q1_data)
+```
+
+(a) Do a exploratory analysis of this data, including a scatterplot matrix and a graphical representation of the correlation matrix. Comment on your results.
+
+
+```{r}
+library(car)
+scatterplotMatrix(q1_data)
+```
+
+we can see from the scatterplot matrix that X1 X2 and X3 seem to have positive correlation indicating they have a very similar effect on y.
+
+We also see that in general Y is linearly affected by all variables, with the exception of x6.
+
+```{r}
+library(corrplot)
+cor_1 <- cor(q1_data)
+corrplot.mixed(cor_1)
+```
+
+same conclusions we got from earlier with x1,x2,x3 having very similar effects on Y.
+
+we also see strong positive relationship of Y with x1,x2,x3 and X7, and a negative relationship with X4 and x5.
+
+
+(b) Fit a complete model for `Y` including all the other variables. Produce a summary table and interpret the $t$ tests in the table. What is the $p$-value for the overall significance test for the regression? 
+
+```{r}
+full_model <- lm(Y ~ X1 + X2 + X3 + X4 + X5 + X6 + X7, data = q1_data)
+summary(full_model)
+```
+
+from the t tests we see that variables x2, x3, x5, x6 seem to not be significant to the model (p > 0.02)
+also the p-value of the entire model is <2.2e-16, thus we reject the null hypothesis and say that at least one variable is useful for predicting Y
+
+
+(c) Check for multicollinearity and drop variables as needed until this problem is resolved. Use a threshold value of 2.
+
+```{r}
+vif(full_model)
+mod1 <- update(full_model, .~. - X3)
+vif(mod1)
+mod2 <- update(mod1, .~. - X1)
+vif(mod2)
+mod3 <- update(mod2, .~. - X5)
+vif(mod3)
+```
+
+now all remaining variables are under the threshold so we keep them.
+
+
+
+(d) Starting with the model obtained in section (c), get a minimal model using a backward selection procedure with a critical $\alpha$ of  0.1. Use the function `drop1` for this.
+
+```{r}
+drop1(mod3, test = "F")
+mod4 <- update(mod3, .~. - X6)
+drop1(mod4, test = "F")
+summary(mod4)
+```
+
+since all values are > alpha_critical, we found our minimal adequate model. using variables X2, X4, X7 to predict Y
+
+
+(e) Starting with the full model obtained in section (b), fit a model using Akaike's Information Criterion (AIC). You can use the function `stepAIC` in the `MASS` library or the function `step` in the base package. Check the resulting model for multicollinearity. Compare with the model obtained in (d).
+
+```{r}
+library(MASS)
+aic_model <- stepAIC(full_model)
+summary(aic_model)
+```
+
+this model usees X1, X4, and X7 to predict Y with an R squared value of 0.8391
+the model from part d uses X2 instead of X1 and has an R squared value of 0.8055, this means the AIC model is a better fit to the data
+
+(f) Starting with the full model obtained in section (b), fit a model by maximizing the adjusted $R^2$.  Check the resulting model for multicollinearity. Compare with the models obtained in (d) and (e). Are all the models the same? If not, which one would you choose and why?
+
+```{r}
+library(leaps)
+subsets <- regsubsets(q1_data[ , -1], q1_data[,1])
+summary(subsets)
+summary(subsets)$adjr2
+best_adjR2_model <- lm(Y ~ X1 + X4 + X7, data = q1_data)
+vif(best_adjR2_model)
+```
+
+we get that the maximum adjusted R value is 0.8357875 which is the 3 predictor model which includes predictors X1, X4, and X7.
+also checking for multicollinearity with threshold 2, we see that all predictors are below that so no issues here.
+This model is an exact replica of the AIC_model, which means we already got the best fitting model using the AIC method.
+and of course it follows the same comparison to part D which used X2 instead of X1 and has a lower R^2 and adj R^2 values.
+
+Regarding choice i would choose the model we found with best R^2 and AIC model which is the same, this gives us the best fit with the best predictors.
+
+
+(g) Plot the standard diagnostic graphs for the model that you fitted in (d) and comment on what you observe. Use also the Shapiro-Wilk and ncv tests and comment on the results.
+
+```{r}
+par(mfrow = c(2, 2))
+plot(mod4)
+par(mfrow = c(1, 1))
+```
+
+we see from residuals vs fitted that the line is nearly horizantal and is near 0, indicating linearity.
+the QQ residuals plot shows the points roughly lying on the line, indicating normality
+the scale-location plot is also horizantal with an even spread of points which indicates that we have equal variances.
+residuals vs leverage shows a few points with higher leverage but no signficant influential points.
+
+```{r}
+shapiro.test(residuals(mod4))
+ncvTest(mod4)
+```
+
+with a p-value of 0.6585 in shapiro test we can say that the resdiuals are normally distributed
+with a p-value of 0.83124 in the ncv test we can say that the resdiausl have equal variances.
+
+
+(h) Predict the `Y` value for a subject with covariates 
+\begin{center}
+(\texttt{X1, X2, X3, X4, X5, X6, X7}) = (15.2, 9.6, 10.7, 9.2, 5.33, 1, -0.8) 
+\end{center}
+using the model you fitted in (d). Add a confidence interval at level 98%.
+
+
+```{r}
+predict_data <- data.frame(X2 = 9.6, X4 = 9.2, X7 = -0.8)
+predict(mod4, newdata = predict_data, interval = "c", level = 0.98)
+```
+
+
+
+***
+
+## Question 2
+
+
+A city transportation department is studying bike rental duration. They believe that the effect of age on rental duration differs between:
+
+- Casual riders (`member` = 0)
+
+- Registered members (`member` = 1)
+
+To study this, they collect data on 30 riders. The data is in the file `HW825FQ2.csv`. Remember to transform `member` into a factor.
+
+
+```{r}
+q2_data <- read.csv("HW825FQ2.csv")
+str(q2_data)
+q2_data$member <- as.factor(q2_data$member)
+str(q2_data)
+```
+
+(a) Fit a simple regression model for `duration` in terms of `age`. Print the summary table and comment on the results. Draw a scatterplot and add the regression line. Comment. Using diagnostic plots and test, check whether the assumptions for the model are satisfied. Predict the value of `duration` for a value of `age = 45` with this model and include confidence intervals at the 98% level.
+
+
+```{r}
+mod_a <- lm(duration ~ age, data = q2_data)
+summary(mod_a)
+```
+
+we can see the p-values being very low indicating the coefficients != 0, we also see the adj r^2 value of 0.7529
+
+```{r}
+plot(q2_data$age, q2_data$duration,
+xlab = "Age",
+ylab = "Duration",
+main = "Scatterplot of Duration vs Age")
+abline(mod_a, col = "red", lwd = 2)
+```
+
+we see that the data points show a positive relationship between duration and age, we also see that the model fits that general positive trend.
+
+```{r}
+par(mfrow = c(2, 2))
+plot(mod_a)
+par(mfrow = c(1, 1))
+```
+
+residuals vs fitted shows a very curved line with an inverted U shaped, this indicaites non-linearity.
+q-qresiduals shows the points lying close to the line but not perfectly fitting, indicating non-normality
+scale-location is mostly horizantal with a small positive slope, indicates constant variance but requires further testing
+residuals vs leverage shows a few points with high leverage (1, 19) but no influential points.
+
+```{r}
+shapiro.test(residuals(mod_a))
+ncvTest(mod_a)
+```
+
+Shapiro test p-value of 0.06394 indicates linearity using since our signficance level is 0.02 and 0.06394 > 0.02
+ncv test p-value of 0.093 > 0.02 which means we have constant variance at that level
+
+```{r}
+predict(mod_a, newdata = data.frame(age = 45), interval = "c", level = 0.98)
+```
+
+we predict a 45 years old rider to have a duration of 83.8744, with interval [80.7554, 86.9933]
+
+(b) Draw a new scatterplot and color the points according to the value of `member`. Comment on what you observe.
+
+
+```{r}
+plot(q2_data$age, q2_data$duration,
+col = c("blue", "red")[q2_data$member],
+xlab = "Age",
+ylab = "Duration",
+main = "Scatterplot of Duration vs Age")
+
+legend("topleft",
+legend = c("Non-Member", "Member"),
+col = c("blue", "red"),
+lwd = 2)
+```
+
+we see that the data points seem to split into two different trendlines based on the member variable.
+
+
+
+(c) Fit a new model for `duration` as a function of `age` and `member`, including an interaction term. Print an anova table for this model and interpret the $p$-values in the table. If necessary, fit a new model dropping the terms that have a non-significant $p$-value. Print a summary table for the final model and interpret the coefficients. What is the value for the estimated variance of the errors? What is the $R^2$, how do they compare with the previous model?
+
+```{r}
+mod_b <- lm(duration ~ age * member, data = q2_data)
+anova(mod_b)
+summary(mod_b)
+```
+
+looking at the P values of the predictors, we see that age, member, and their interactions are signficant for predicting duration.
+therefore we don't drop any variable and take this to be the minimal adequate fitting model.
+
+the equation we get is:
+duration = beta1 + beta2 * age + beta3 * member1 + beta4 (age * member1), with member1 being a dummy variable indicating whether they are a member or not
+and the 4 beta values are the coefficients of the model, (b1 = 27.40, b2 = 1.45, b3 = 6.72, b4 = -0.43)
+
+the estimated variance of errors is found to be 3.33 from the ANOVA table. R^2 is found to be 0.973 from the model summary which indicates a very good fit of the data.
+
+
+
+(d) Draw a scatterplot and color the points according to the value of type. Add the regression lines corresponding to the model you fitted in (c). Write down an equation for this model.
+
+```{r}
+plot(q2_data$age, q2_data$duration,
+col = c("blue", "red")[q2_data$member],
+xlab = "Age",
+ylab = "Duration",
+main = "Scatterplot of Duration vs Age")
+
+legend("topleft",
+legend = c("Non-Member", "Member"),
+col = c("blue", "red"),
+lwd = 2)
+
+abline(a = coef(mod_b)[1], b = coef(mod_b)[2], col = "blue", lwd = 2)
+
+abline(a = coef(mod_b)[1] + coef(mod_b)[3],
+       b = coef(mod_b)[2] + coef(mod_b)[4], col = "red", lwd = 2)
+```
+
+The equation for this model is:
+Duration_Non_Member = 27.39758 + 1.44505 * age
+Duration Member = 27.39758 + 1.44505 * age + 6.72162 - 0.43375 * age = 34.1192 + 1.0113 * age
+
+
+(e) Plot the standard diagnostic graphs for the model that you fitted in (c) and comment on what you observe. Use also the Shapiro-Wilk and ncv tests and comment on the results.
+
+```{r}
+par(mfrow = c(2, 2))
+plot(mod_b)
+par(mfrow = c(1, 1))
+```
+
+from residuals vs fitted we see the line curves a lot and isn't horizantal, indicating non-linearity
+from qq residuals we see the points roughly fit the dashed line, indicating normality
+from scale-locaiton we see the line curving a lot and and has a strong slope at t he end, indicating no constant variance
+from residuals vs leverage we see no influential points but some points with high leveratge (13, 28)
+
+```{r}
+shapiro.test(residuals(mod_b))
+ncvTest(mod_b)
+```
+
+with a high p-value for both shapiro and ncv test, we say that the residuals follow a normal distribution and have constant variance.
+
+(f) Predict the value of `duration` for a value of `age = 45` and for the two levels of `member`. Include confidence intervals at the 98% level. Compare with the prediction in (a).
+
+```{r}
+(predict_non <- predict(mod_b, newdata = data.frame(age = 45, member = "0"), interval = "c", level = 0.98))
+(predict_member <- predict(mod_b, newdata = data.frame(age = 45, member = "1"), interval = "c", level = 0.98))
+```
+
+we predict that a non member aged 45 would have a rental duration of 92.425 with a 98% confidence interval [90.456, 94.394]
+and a member with the sage age to have a duration of 79.627 with a 98% confidence interval of [78.300, 80.955]
+
